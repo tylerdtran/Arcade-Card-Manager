@@ -35,16 +35,3 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-
------------------
-```
-directory structure 
-/app 
-/app/cards
- - route.ts # this handles the GET and POST routes /api/cards
-/app/cards/[id]
- - route.ts # this handles the PUT and DELETE routes /api/cards/:id
-
-
-
-```
