@@ -30,7 +30,7 @@ export default function CardForm({ card, mode} : CardFormProps) {
         }
     }, [card, mode])
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target
         setFormData({ ...formData, [name]: value })
     }
@@ -41,8 +41,11 @@ export default function CardForm({ card, mode} : CardFormProps) {
         setError(null)
 
         try {
-            const response = await fetch(`/api/cards/${card?.id}`, {
-                method: mode === 'create' ? 'POST' : 'PUT',
+            const url = mode === 'create' ? '/api/cards' : `/api/cards/${card?.id}`
+            const method = mode === 'create' ? 'POST' : 'PUT'
+
+            const response = await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json'
                 },

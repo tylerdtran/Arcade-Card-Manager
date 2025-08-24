@@ -1,7 +1,7 @@
 // PUT and DELETE routes for cards with [id] param
 
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '../../../../lib/prisma'
+import { prisma } from '../../../lib/prisma'
 import { UpdateCardData } from '../../../types/card'
 
 // get card by id, this is a dynamic route for when an edit page is loaded
