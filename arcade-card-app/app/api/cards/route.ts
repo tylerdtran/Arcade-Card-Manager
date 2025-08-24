@@ -1,7 +1,7 @@
 // GET and POST routes for cards sorting also will happen through the api route and not the client side 
 
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../lib/prisma'
 import { CreateCardData, UpdateCardData } from '../../types/card'
 
 export async function GET(request: NextRequest) {
