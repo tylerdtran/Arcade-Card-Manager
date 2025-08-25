@@ -1,69 +1,67 @@
 # Arcade Card Manager
 
-A full-stack card management application built with Next.js, Prisma, PostgreSQL, TypeScript, and Tailwind CSS.
-
-## Features
-
-- **CRUD Operations**: Create, read, update, and delete cards
-- **Sorting**: Sort cards by title or description (A-Z and Z-A)
-- **Filtering**: Filter cards by fill color
-- **Color Palette**: 10 predefined colors for card backgrounds
-- **Responsive Design**: Clean, modern UI that works on all devices
-- **Type Safety**: Fully typed with TypeScript
-- **Database Persistence**: Cards persist across page reloads
-
-## Tech Stack
-
-- **Frontend**: Next.js 14 (App Router), React 18, TypeScript
-- **Styling**: Tailwind CSS
-- **Backend**: Next.js API Routes
-- **Database**: PostgreSQL with Prisma ORM
-- **Deployment**: Ready for Vercel deployment
+I created a card management application using Next.js, Prisma ORM, PostgreSQL, TypeScript, and Tailwind CSS. The application supports CRUD operations for cards and uses reusable components (CardList, CardForm, CardItem).  
 
 ## Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+ (I used node 20 to develop)
 - PostgreSQL database
-- npm or yarn
+- npm 
 
 ## Setup Instructions
 
-### 1. Clone and Install Dependencies
+### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd arcade-card-manager
+git clone https://github.com/tylerdtran/Arcade-Card-Manager
+cd arcade-card-app
+```
+
+### 2. Install Dependencies
+
+```bash
 npm install
 ```
 
-### 2. Database Setup
+### 3. Database Setup
 
-1. Create a PostgreSQL database
-2. Copy `.env.example` to `.env` and update the database URL:
+#### Local PostgreSQL
+1. Install PostgreSQL on your system
+2. Create a new database:
+```sql
+CREATE DATABASE card_manager;
+```
+
+### 4. Environment Configuration
+
+Create a `.env` file in the root directory:
 
 ```bash
 cp .env.example .env
 ```
 
 Edit `.env` with your PostgreSQL connection string:
-```
+```env
 DATABASE_URL="postgresql://username:password@localhost:5432/card_manager"
 ```
 
-### 3. Database Migration
+**Example connection strings:**
+- Local: `postgresql://postgres:password@localhost:5432/card_manager`
+
+### 5. Prisma Setup
 
 ```bash
 # Generate Prisma client
-npm run db:generate
+npx prisma generate
 
-# Push schema to database
-npm run db:push
+# Push schema to database (for development)
+npx prisma db push
 
-# Or run migrations (if using migrations)
-npm run db:migrate
+# Or run migrations (for production)
+npx prisma migrate dev --name init
 ```
 
-### 4. Development
+### 6. Start Development Server
 
 ```bash
 npm run dev
@@ -71,7 +69,19 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
 
+## Design Decisions & Performance Considerations
+Filtering and Sorting are done on the backend in the respective endpoints in the `route.ts` files. The filtering and sorting being done through the endpoints when the database queries are called is more efficient than filtering and sorting on the client-side as it requires less client-side processing. Sorting is done based on the ASCII system. So capital letters will always have precedence over lowercase letters 
+
+The Prisma ORM provides an interface to interact with the Postgres database without having to write direct SQL queries. Something that I noticed is that this integration with typescript allows for more seamless querying of the database. Kinda cool. 
+
+Lastly, I provided error handling inside the components when the endpoints are called as well as within the endpoints themselves to provide proper error messaging for cases where the endpoint call is unsuccessful. There is also the confirmation dialog set to ensure that there are no accidental deletions per the assessment specifications.
+
+There is also database persistance as cards do persist across page reloads and when a user edits and doesn't save the edit, the card does not reflect the changes that the user tried to make as instructed by the assessment spec. 
+
+
 ## API Endpoints
+
+I currently support these 5 endpoints. I know only 4 were required but the `GET /api/cards/:id` is required to populate the input fields of the [id]/edit page. 
 
 - `GET /api/cards` - Fetch all cards (supports filtering and sorting)
 - `POST /api/cards` - Create a new card
@@ -79,80 +89,101 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 - `PUT /api/cards/:id` - Update a card
 - `DELETE /api/cards/:id` - Delete a card
 
+The first two endpoints are reflected in the `../app/api/cards/route.ts`. The last 3 endpoints are reflected in `../app/api/cards/[id]/route.ts`. They take advantage of the dynamic routing supported by next.js through the file structure to target cards with a specific `[id]`.  
+
 ## Color Palette
 
-The application uses a predefined color palette:
-- Red (#FF6B6B)
-- Orange (#FFA94D)
-- Yellow (#FFD43B)
-- Green (#69DB7C)
-- Teal (#38D9A9)
-- Cyan (#4DABF7)
-- Blue (#748FFC)
-- Indigo (#9775FA)
-- Pink (#F783AC)
-- Gray (#CED4DA)
+I used the predefined color palette with 10 colors:
+
+| Color Name | Hex Code | Tailwind Class |
+|------------|----------|----------------|
+| Red        | #FF6B6B  | bg-card-red    |
+| Orange     | #FFA94D  | bg-card-orange |
+| Yellow     | #FFD43B  | bg-card-yellow |
+| Green      | #69DB7C  | bg-card-green  |
+| Teal       | #38D9A9  | bg-card-teal   |
+| Cyan       | #4DABF7  | bg-card-cyan   |
+| Blue       | #748FFC  | bg-card-blue   |
+| Indigo     | #9775FA  | bg-card-indigo |
+| Pink       | #F783AC  | bg-card-pink   |
+| Gray       | #CED4DA  | bg-card-gray   |
+
+Text should remain readable with black font on all background colors.
+
+I put these colors into an exportable color map in `/constants/colors.ts` for easier access to these colors. 
 
 ## Project Structure
 
 ```
-├── app/                    # Next.js App Router pages
-│   ├── api/               # API routes
-│   ├── cards/             # Card-related pages
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Home page
-├── components/            # React components
-│   ├── CardForm.tsx       # Card creation/editing form
-│   ├── CardItem.tsx       # Individual card display
-│   └── CardList.tsx       # Card list with controls
-├── constants/             # Application constants
-│   └── colors.ts          # Color palette definitions
-├── lib/                   # Utility libraries
-│   └── prisma.ts          # Prisma client configuration
-├── prisma/                # Database schema
-│   └── schema.prisma      # Prisma schema
-├── types/                 # TypeScript type definitions
-│   └── card.ts            # Card-related types
-└── package.json           # Dependencies and scripts
+arcade-card-app/
+├── app/                          # Next.js App Router pages
+│   ├── api/                      # API routes
+│   │   └── cards/                # Card API endpoints
+│   │       ├── route.ts          # GET /api/cards, POST /api/cards
+│   │       └── [id]/             # Individual card endpoints
+│   │           └── route.ts      # GET, PUT, DELETE /api/cards/:id
+│   ├── cards/                    # Card-related pages
+│   │   ├── new/                  # Create new card
+│   │   │   └── page.tsx
+│   │   └── [id]/                 # Edit card
+│   │       └── edit/
+│   │           └── page.tsx
+│   ├── components/               # React components
+│   │   ├── CardForm.tsx          # Card creation/editing form
+│   │   ├── CardItem.tsx          # Individual card display
+│   │   └── CardList.tsx          # Card list with controls
+│   ├── constants/                # Application constants
+│   │   └── colors.ts             # Color palette definitions
+│   ├── types/                    # TypeScript type definitions
+│   │   └── card.ts               # Card-related types
+│   ├── globals.css               # Global styles
+│   ├── layout.tsx                # Root layout
+│   └── page.tsx                  # Home page
+├── lib/                          # Utility libraries
+│   └── prisma.ts                 # Prisma client configuration
+├── prisma/                       # Database schema
+│   └── schema.prisma             # Prisma schema
+├── public/                       # Static assets
+├── .env                          # Environment variables
+├── .env.example                  # Example environment file
+├── package.json                  # Dependencies and scripts
+├── tailwind.config.js            # Tailwind CSS configuration
+├── tsconfig.json                 # TypeScript configuration
+└── README.md                     # This file
 ```
 
-## Design Decisions
+When it comes to the `/cards` directory, there are two specific pages the `/new` directory that routes to a URL with `/new` that creates a new card and the `[id]/edit` directory that routes to a url with `[id]/edit` that allows a user to edit the existing card `[id]`. Both page.tsx files utilize the same `<CardForm>` component but passes through a different mode prop. This allows us to modularly use the same CardForm component, reducing redundant code. 
 
-### Architecture
-- **Next.js App Router**: Modern file-based routing with server components
-- **API Routes**: RESTful API endpoints for CRUD operations
-- **Prisma ORM**: Type-safe database operations with auto-generated client
-- **TypeScript**: Full type safety across the application
+## Database Schema
 
-### Performance Considerations
-- **Server-side filtering and sorting**: Reduces client-side processing
-- **Optimistic updates**: Immediate UI feedback for better UX
-- **Efficient queries**: Prisma optimizes database queries automatically
+```prisma
+model Card {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  fillColor   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+```
+I decided for the timestamps that I should have a createdAt and updatedAt DateTime field. These could be potentially useful for future sorting parameters in case we want to sort by when the card was created or when it was last updated. 
 
-### User Experience
-- **Confirmation dialogs**: Prevent accidental deletions
-- **Loading states**: Clear feedback during async operations
-- **Error handling**: Graceful error messages and fallbacks
-- **Responsive design**: Works seamlessly on all device sizes
+## Troubleshooting
 
-## Available Scripts
+### Common Issues
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run db:generate` - Generate Prisma client
-- `npm run db:push` - Push schema to database
-- `npm run db:migrate` - Run database migrations
-- `npm run db:studio` - Open Prisma Studio
+1. **Prisma Client not generated**
+   ```bash
+   npx prisma generate
+   ```
 
-## Deployment
+2. **Database connection failed**
+   - Check your `DATABASE_URL` in `.env`
+   - Ensure PostgreSQL is running
+   - Verify database exists
 
-This application is ready for deployment on Vercel:
+3. **Migration errors**
+   ```bash
+   npx prisma db push
+   ```
 
-1. Connect your GitHub repository to Vercel
-2. Set the `DATABASE_URL` environment variable
-3. Deploy automatically on push to main branch
-
-The application will work with any PostgreSQL provider (Supabase, Railway, etc.). 
