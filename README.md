@@ -56,7 +56,7 @@ Create a `.env` file in the `/Arcade-Card-Manager/arcade-card-app` directory:
 
 Edit `.env` with your PostgreSQL connection string:
 ```env
-DATABASE_URL="DATABASE_URL="postgresql://postgres:yourpassword@localhost:5432/card_manager"
+DATABASE_URL="postgresql://postgres:yourpassword@localhost:5432/card_manager"
 ```
 
 ### 5. Prisma Setup
