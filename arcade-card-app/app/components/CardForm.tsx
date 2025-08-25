@@ -25,7 +25,7 @@ export default function CardForm({ card, mode} : CardFormProps) {
         if (card && mode === 'edit') {
             setFormData({
                 title: card.title,
-                description: card.description,
+                description: card.description || '',
                 fillColor: card.fillColor
             })
         }
