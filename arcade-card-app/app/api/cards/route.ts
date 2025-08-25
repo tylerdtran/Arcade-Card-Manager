@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../lib/prisma'
-import { CreateCardData, UpdateCardData } from '../../types/card'
+import { CreateCardData } from '../../types/card'
 
 // GET /api/cards
 export async function GET(request: NextRequest) {

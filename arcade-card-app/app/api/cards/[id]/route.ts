@@ -6,9 +6,12 @@ import { UpdateCardData } from '../../../types/card'
 
 // get card by id, this is a dynamic route for when an edit page is loaded
 // GET /api/cards/[id]
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
     try {
-        const { id } = params
+        const { id } = await params
         const card = await prisma.card.findUnique({
             where: { id }
         })
@@ -26,23 +29,42 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 // update card
 // PUT /api/cards/[id]
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
     try {
-        const { id } = params
+        const { id } = await params
         const body: UpdateCardData = await request.json()
 
-        if (!body.title && !body.description && !body.fillColor) {
+        if (!body.title && body.description === undefined && !body.fillColor) {
             return NextResponse.json({ error: 'At least one field is required' }, { status: 400 })
+        }
+
+        const updateData: {
+            title?: string;
+            description?: string | null;
+            fillColor?: string;
+        } = {}
+        
+        // Handle title update
+        if (body.title !== undefined) {
+            updateData.title = body.title
+        }
+        
+        // Handle description update - allow empty string to be saved as null
+        if (body.description !== undefined) {
+            updateData.description = body.description || null
+        }
+        
+        // Handle fillColor update
+        if (body.fillColor !== undefined) {
+            updateData.fillColor = body.fillColor
         }
 
         const card = await prisma.card.update({
             where: { id },
-            data: {
-                // if the body has a title, description, or fillColor, update the card
-                ...(body.title && { title: body.title }),
-                ...(body.description && { description: body.description }),
-                ...(body.fillColor && { fillColor: body.fillColor })
-            }
+            data: updateData
         })
 
         if (!card) {
@@ -57,9 +79,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE /api/cards/[id]
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
     try {
-        const { id } = params
+        const { id } = await params
         const card = await prisma.card.delete({
             where: { id }
         })
