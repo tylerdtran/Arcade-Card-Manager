@@ -14,7 +14,7 @@ I created a card management application using Next.js, Prisma ORM, PostgreSQL, T
 
 ```bash
 git clone https://github.com/tylerdtran/Arcade-Card-Manager
-cd arcade-card-app
+cd Arcade-Card-Manager/arcade-card-app
 ```
 
 ### 2. Install Dependencies
@@ -26,27 +26,38 @@ npm install
 ### 3. Database Setup
 
 #### Local PostgreSQL
+
+
 1. Install PostgreSQL on your system
+```bash
+# if not already installed
+brew install postgresql # if necessary, (these were the commands I ran to setup)
+brew services start postgresql # if necessary
+
+# once installed 
+createuser -s postgres
+psql -U postgres
+```
 2. Create a new database:
 ```sql
+# inside the psql session
 CREATE DATABASE card_manager;
 ```
+To check that the connection
+```sql
+psql -U postgres -d card_manager
 
+# inside the psql session
+ALTER USER postgres PASSWORD 'yourpassword';
+```
 ### 4. Environment Configuration
 
-Create a `.env` file in the root directory:
-
-```bash
-cp .env.example .env
-```
+Create a `.env` file in the `/Arcade-Card-Manager/arcade-card-app` directory:
 
 Edit `.env` with your PostgreSQL connection string:
 ```env
-DATABASE_URL="postgresql://username:password@localhost:5432/card_manager"
+DATABASE_URL="DATABASE_URL="postgresql://postgres:yourpassword@localhost:5432/card_manager""
 ```
-
-**Example connection strings:**
-- Local: `postgresql://postgres:password@localhost:5432/card_manager`
 
 ### 5. Prisma Setup
 
@@ -56,9 +67,6 @@ npx prisma generate
 
 # Push schema to database (for development)
 npx prisma db push
-
-# Or run migrations (for production)
-npx prisma migrate dev --name init
 ```
 
 ### 6. Start Development Server
