@@ -4,9 +4,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../lib/prisma'
 import { CreateCardData, UpdateCardData } from '../../types/card'
 
+// GET /api/cards
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
+
+        // sorting and filtering implemented through API endpoints
         const fillColor = searchParams.get('fillColor')
         const sortBy = searchParams.get('sortBy') as 'title' | 'description' | null
         const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | null
@@ -19,13 +22,14 @@ export async function GET(request: NextRequest) {
             orderBy
         })
 
-        return NextResponse.json(cards)
+        return NextResponse.json(cards, { status: 200 })
     } catch (error) {
         console.error('Error fetching cards:', error)
         return NextResponse.json({ error: 'Failed to fetch cards' }, { status: 500 })
     }
 }
 
+// POST /api/cards
 export async function POST(request: NextRequest) {
     try {
         const body: CreateCardData = await request.json()

@@ -1,3 +1,4 @@
+// based on the color palette provided in the instructions
 export const CARD_COLORS = [
     { name: 'Red', value: '#FF6B6B', className: 'bg-card-red' },
     { name: 'Orange', value: '#FFA94D', className: 'bg-card-orange' },
@@ -11,5 +12,5 @@ export const CARD_COLORS = [
     { name: 'Gray', value: '#CED4DA', className: 'bg-card-gray' },
   ] as const
   
-  export type CardColor = typeof CARD_COLORS[number]['value']
+export type CardColor = typeof CARD_COLORS[number]['value']
   

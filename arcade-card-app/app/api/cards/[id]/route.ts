@@ -5,6 +5,7 @@ import { prisma } from '../../../lib/prisma'
 import { UpdateCardData } from '../../../types/card'
 
 // get card by id, this is a dynamic route for when an edit page is loaded
+// GET /api/cards/[id]
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const { id } = params
@@ -24,6 +25,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // update card
+// PUT /api/cards/[id]
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const { id } = params
@@ -36,11 +38,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         const card = await prisma.card.update({
             where: { id },
             data: {
-                // if body.title is not empty, update the title
+                // if the body has a title, description, or fillColor, update the card
                 ...(body.title && { title: body.title }),
-                // if body.description is not empty, update the description
                 ...(body.description && { description: body.description }),
-                // if body.fillColor is not empty, update the fillColor
                 ...(body.fillColor && { fillColor: body.fillColor })
             }
         })
@@ -56,6 +56,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 }
 
+// DELETE /api/cards/[id]
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const { id } = params
